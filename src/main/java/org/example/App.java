@@ -36,7 +36,7 @@ public class App
 {
     public static boolean tseitin = false;
 
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws IOException, ExtensionManager.NoSuchExtensionException {
         final File UVL_FILE = new File(args[0]);
         final File TARGET_FILE = new File(args[1]);
         final Target target = args[2].equals("dimacs") ? Target.DIMACS : Target.OPB;
@@ -90,7 +90,7 @@ public class App
         }
     }
 
-    public static void uvlToDimacsFeatureIDE(File modelFile, File targetFile) throws IOException {
+    public static void uvlToDimacsFeatureIDE(File modelFile, File targetFile) throws IOException, ExtensionManager.NoSuchExtensionException {
         UVLModelFactory uvlModelFactory = new UVLModelFactory();
         FeatureModel featureModel = loadUVLFeatureModelFromFile(modelFile.toString());
         Set<LanguageLevel> levels = new HashSet<>();
@@ -100,9 +100,23 @@ public class App
 
         LibraryManager.registerLibrary(FMCoreLibrary.getInstance());
         FMFormatManager.getInstance().addExtension(new UVLFeatureModelFormat());
+        UVLModelToFeatureIDEModel uvlModelToFeatureIDEModel = new UVLModelToFeatureIDEModel(featureModel);
+        var fm = uvlModelToFeatureIDEModel.constructFeatureModel(modelFile.toPath());
+        fm.setSourceFile(modelFile.toPath());
+        FileHandler.save(targetFile.toPath(), fm, new DIMACSFormat());
+
+         /*
+
+
+        LibraryManager.registerLibrary(FMCoreLibrary.getInstance());
+        FMFormatManager.getInstance().addExtension(new UVLFeatureModelFormat());
 
         IFeatureModel fm = getFeatureIdeFMFromString(modelFile.toPath(), featureModel.toString());
         FileHandler.save(targetFile.toPath(), fm, new DIMACSFormat());
+
+          */
+
+
     }
 
     public static IFeatureModel getFeatureIdeFMFromString(Path path, String content) throws IOException {
