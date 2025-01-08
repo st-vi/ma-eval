@@ -27,10 +27,12 @@ public class ModelGenerator {
         Path modelDirGroupCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/groupCard");
         modelGenerator.safeFeatureModelsToFiles(groupCardinalityModels, modelDirGroupCard);
 
+
+ */
         List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(List.of(0.0, 0.25, 0.5, 0.75, 1.0), 15, 30, 5);
         Path modelDirFeatureCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/featureCard");
         modelGenerator.safeFeatureModelsToFiles(featureCardinalityModels, modelDirFeatureCard);
-
+/*
         List<FeatureModel> sumModels = modelGenerator.generateSumModels(15, 30, 5, 0, 100);
         Path modelDirSum = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/sum");
         modelGenerator.safeFeatureModelsToFiles(sumModels, modelDirSum);
@@ -49,8 +51,10 @@ public class ModelGenerator {
 
 
  */
-        FeatureModel test = modelGenerator.generateDivModel2(10, 0, 100);
-        System.out.println(test.toString());
+
+
+        //FeatureModel test = modelGenerator.generateDivModel2(10, 0, 100);
+        //System.out.println(test.toString());
     }
 
     private List<FeatureModel> generateDivModels2(int minN, int maxN, int stepSize, int aMin, int aMax) {
@@ -351,7 +355,7 @@ public class ModelGenerator {
             f.setParentGroup(or);
         }
         groupList.add(or);
-        Group optional = new Group(Group.GroupType.ALTERNATIVE);
+        Group optional = new Group(Group.GroupType.OPTIONAL);
         optional.getFeatures().add(new Feature("firstOptionalFeature"));
         optional.getFeatures().add(new Feature("secondOptionalFeature"));
         optional.getFeatures().add(new Feature("thirdOptionalFeature"));
@@ -359,7 +363,7 @@ public class ModelGenerator {
             f.setParentGroup(optional);
         }
         groupList.add(optional);
-        Group mandatory = new Group(Group.GroupType.ALTERNATIVE);
+        Group mandatory = new Group(Group.GroupType.MANDATORY);
         mandatory.getFeatures().add(new Feature("firstMandatoryFeature"));
         mandatory.getFeatures().add(new Feature("secondMandatoryFeature"));
         mandatory.getFeatures().add(new Feature("thirdMandatoryFeature"));
