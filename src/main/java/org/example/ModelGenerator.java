@@ -18,39 +18,59 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ModelGenerator {
     public static void main(String[] args) throws IOException {
         ModelGenerator modelGenerator = new ModelGenerator();
+
 /*
-        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(5, 100, 5);
+        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(1000, 10000, 1000);
         Path modelDirAlternative = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/alternative");
         modelGenerator.safeFeatureModelsToFiles(alternativeModels, modelDirAlternative);
+
+
 
         List<FeatureModel> groupCardinalityModels = modelGenerator.generateGroupCardinalityModels(List.of(0.0, 0.25, 0.5, 0.75, 1.0), 15, 30, 5);
         Path modelDirGroupCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/groupCard");
         modelGenerator.safeFeatureModelsToFiles(groupCardinalityModels, modelDirGroupCard);
 
-
- */
         List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(List.of(0.0, 0.25, 0.5, 0.75, 1.0), 15, 30, 5);
         Path modelDirFeatureCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/featureCard");
         modelGenerator.safeFeatureModelsToFiles(featureCardinalityModels, modelDirFeatureCard);
+
+
+
+ */
 /*
-        List<FeatureModel> sumModels = modelGenerator.generateSumModels(15, 30, 5, 0, 100);
+        List<FeatureModel> sumModels = modelGenerator.generateSumModels(20, 50, 10, 1, 100);
         Path modelDirSum = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/sum");
         modelGenerator.safeFeatureModelsToFiles(sumModels, modelDirSum);
 
-        List<FeatureModel> productModels = modelGenerator.generateProductModels(15, 30, 5, 0, 100);
+ */
+        /*
+//eigentlich max 18
+        List<FeatureModel> productModels = modelGenerator.generateProductModels(2, 18, 2, 1, 10);
         Path modelDirProduct = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/product");
         modelGenerator.safeFeatureModelsToFiles(productModels, modelDirProduct);
+
+         */
+
+
+        /*
 
         List<FeatureModel> divModels = modelGenerator.generateDivModels(15, 30, 5, 0, 100);
         Path modelDirDiv = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/div");
         modelGenerator.safeFeatureModelsToFiles(divModels, modelDirDiv);
 
-        List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(15, 30, 5, 0, 100);
+         */
+
+
+
+        List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(16, 20, 2, 1, 10);
         Path modelDirDiv2 = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/div2");
         modelGenerator.safeFeatureModelsToFiles(divModels2, modelDirDiv2);
 
 
- */
+
+
+
+
 
 
         //FeatureModel test = modelGenerator.generateDivModel2(10, 0, 100);
@@ -156,8 +176,8 @@ public class ModelGenerator {
         }
 
         int nd2 = (group.getFeatures().size() - 1) / 2;
-        Expression d1 = new ParenthesisExpression(new AddExpression(new LiteralExpression(group.getFeatures().get(0).getAttributes().get("a")), new LiteralExpression(group.getFeatures().get(1).getAttributes().get("a"))));
-        Expression d2 = new ParenthesisExpression(new MulExpression(new LiteralExpression(group.getFeatures().get(nd2+1).getAttributes().get("a")), new LiteralExpression(group.getFeatures().get(nd2+2).getAttributes().get("a"))));
+        Expression d1 = new AddExpression(new LiteralExpression(group.getFeatures().get(0).getAttributes().get("a")), new LiteralExpression(group.getFeatures().get(1).getAttributes().get("a")));
+        Expression d2 = new MulExpression(new LiteralExpression(group.getFeatures().get(nd2+1).getAttributes().get("a")), new LiteralExpression(group.getFeatures().get(nd2+2).getAttributes().get("a")));
 
         long a1 = 1;
         for(int i=2;i<=nd2;i++){
@@ -167,11 +187,11 @@ public class ModelGenerator {
             if(randomValue == 0){
                 a1 += (long)feature.getAttributes().get("a").getValue();
                 AddExpression newDivExpression = new AddExpression(d1, literalExpression);
-                d1 = new ParenthesisExpression(newDivExpression);
+                d1 =newDivExpression;
             }else{
                 a1 *= (long)feature.getAttributes().get("a").getValue();
                 MulExpression newDivExpression = new MulExpression(d1, literalExpression);
-                d1 = new ParenthesisExpression(newDivExpression);
+                d1 = newDivExpression;
             }
         }
 
@@ -181,21 +201,51 @@ public class ModelGenerator {
             int randomValue = ThreadLocalRandom.current().nextInt(2);
             if(randomValue == 0){
                 AddExpression newDivExpression = new AddExpression(d2, literalExpression);
-                d2 = new ParenthesisExpression(newDivExpression);
+                d2 = newDivExpression;
             }else{
                 MulExpression newDivExpression = new MulExpression(d2, literalExpression);
-                d2 = new ParenthesisExpression(newDivExpression);
+                d2 = newDivExpression;
             }
         }
 
-        Random random = new Random();
-        double randomD = (long) (random.nextDouble() * a1);
-        Expression d = new NumberExpression(randomD);
+        final int runs = 10000;
+        var sum = 0L;
+        for (int i=1;i<=runs;i++){
+            sum += evaluateAtRandom(d1);
+        }
+        var average_d1 = sum / runs;
+        sum = 0;
+        for (int i=1;i<=runs;i++){
+            sum += evaluateAtRandom(d2);
+        }
+        var average_d2 = sum / runs;
+        Expression d = new NumberExpression(Math.round(((double) average_d1 / (double) average_d2) * 10000.0) / 10000.0);
         Constraint constraint = new GreaterEqualsEquationConstraint(
                 new DivExpression(new ParenthesisExpression(d1),new ParenthesisExpression(d2))
                 , d);
         featureModel.getOwnConstraints().add(constraint);
         return featureModel;
+    }
+
+    private long evaluateAtRandom(Expression expression) {
+        if (expression instanceof AddExpression){
+            return evaluateAtRandom(((AddExpression) expression).getLeft()) + evaluateAtRandom(((AddExpression) expression).getRight());
+        }else if(expression instanceof MulExpression){
+            return evaluateAtRandom(((MulExpression) expression).getLeft()) * evaluateAtRandom(((MulExpression) expression).getRight());
+        }else if(expression instanceof ParenthesisExpression){
+            return evaluateAtRandom(((ParenthesisExpression) expression).getContent());
+        }else{
+            var literalExpression = (LiteralExpression) expression;
+            Random rand = new Random();
+            int randomBit = rand.nextInt(2);
+            if (randomBit == 0){
+                return 0;
+            }else{
+                Attribute<?> attribute = (Attribute<?>) literalExpression.getContent();
+                final Object attributeValue = attribute.getValue();
+                return (long) attributeValue;
+            }
+        }
     }
 
     private FeatureModel generateDivModel(int n, int aMin, int aMax){
@@ -252,18 +302,38 @@ public class ModelGenerator {
             feature.setParentGroup(group);
             group.getFeatures().add(feature);
         }
-        MulExpression product = new MulExpression(new LiteralExpression(group.getFeatures().get(0).getAttributes().get("a")), new LiteralExpression(group.getFeatures().get(1).getAttributes().get("a")));
+        MulExpression product = new MulExpression(
+                new ParenthesisExpression(
+                        new AddExpression(
+                                new NumberExpression(1.0),
+                                new LiteralExpression(group.getFeatures().get(0).getAttributes().get("a"))
+                                )
+                ),
+                new ParenthesisExpression(
+                        new AddExpression(
+                                new NumberExpression(1.0),
+                                new LiteralExpression(group.getFeatures().get(1).getAttributes().get("a"))
+                        )
+                )
+        );
         for(int i=2;i<group.getFeatures().size();i++){
             Feature feature = group.getFeatures().get(i);
             LiteralExpression literalExpression = new LiteralExpression(feature.getAttributes().get("a"));
-            MulExpression newAddExpression = new MulExpression(literalExpression, product);
+            MulExpression newAddExpression = new MulExpression(
+                    new ParenthesisExpression(
+                            new AddExpression(
+                                    new NumberExpression(1.0),
+                                    literalExpression
+                            )
+                    ),
+                    product);
             product = newAddExpression;
         }
 
-        Random random = new Random();
-        long randomD = ThreadLocalRandom.current().nextLong(0, (long)valueProduct);
+        //Random random = new Random();
+        //long randomD = ThreadLocalRandom.current().nextLong(0, (long)valueProduct);
         //long randomD = random.nextInt((int)valueProduct + 1);
-        Expression d = new NumberExpression(randomD);
+        Expression d = new NumberExpression(Math.sqrt(valueProduct));
         Constraint constraint = new GreaterEqualsEquationConstraint(product, d);
         featureModel.getOwnConstraints().add(constraint);
         return featureModel;
@@ -296,9 +366,7 @@ public class ModelGenerator {
             sum = newAddExpression;
         }
 
-        Random random = new Random();
-        long randomD = random.nextInt(valueSum + 1);
-        Expression d = new NumberExpression(randomD);
+        Expression d = new NumberExpression((double)valueSum / 2);
         Constraint constraint = new GreaterEqualsEquationConstraint(sum, d);
         featureModel.getOwnConstraints().add(constraint);
         return featureModel;
