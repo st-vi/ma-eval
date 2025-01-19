@@ -5,11 +5,14 @@ import de.vill.model.constraint.Constraint;
 import de.vill.model.constraint.GreaterEqualsEquationConstraint;
 import de.vill.model.expression.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -25,31 +28,85 @@ public class ModelGenerator {
         modelGenerator.safeFeatureModelsToFiles(alternativeModels, modelDirAlternative);
 
 
-
-        List<FeatureModel> groupCardinalityModels = modelGenerator.generateGroupCardinalityModels(List.of(0.0, 0.25, 0.5, 0.75, 1.0), 15, 30, 5);
-        Path modelDirGroupCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/groupCard");
-        modelGenerator.safeFeatureModelsToFiles(groupCardinalityModels, modelDirGroupCard);
-
-        List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(List.of(0.0, 0.25, 0.5, 0.75, 1.0), 15, 30, 5);
-        Path modelDirFeatureCard = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/featureCard");
-        modelGenerator.safeFeatureModelsToFiles(featureCardinalityModels, modelDirFeatureCard);
-
-
-
  */
+
 /*
-        List<FeatureModel> sumModels = modelGenerator.generateSumModels(20, 50, 10, 1, 100);
-        Path modelDirSum = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/sum");
-        modelGenerator.safeFeatureModelsToFiles(sumModels, modelDirSum);
+        var cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
+        for(int minIndex=0;minIndex<cardinalities.size()-1;minIndex++){
+            for(int maxIndex=minIndex+1;maxIndex<cardinalities.size();maxIndex++){
+                String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/groupCard/groupCard" + "_" + cardinalities.get(minIndex) + "_" + cardinalities.get(maxIndex);
+                File directory = new File(dirPath);
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+                List<FeatureModel> groupCardinalityModels = modelGenerator.generateGroupCardinalityModels(2, 18, 2, cardinalities.get(minIndex), cardinalities.get(maxIndex));
+                Path modelDirGroupCard = Paths.get(dirPath);
+                modelGenerator.safeFeatureModelsToFiles(groupCardinalityModels, modelDirGroupCard);
+
+            }
+        }
 
  */
-        /*
-//eigentlich max 18
-        List<FeatureModel> productModels = modelGenerator.generateProductModels(2, 18, 2, 1, 10);
-        Path modelDirProduct = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/product");
-        modelGenerator.safeFeatureModelsToFiles(productModels, modelDirProduct);
 
-         */
+
+        var feature_cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
+        for(int minIndex=0;minIndex<feature_cardinalities.size()-1;minIndex++) {
+            for (int maxIndex = minIndex + 1; maxIndex < feature_cardinalities.size(); maxIndex++) {
+                String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/featureCard/featureCard" + "_" + feature_cardinalities.get(minIndex) + "_" + feature_cardinalities.get(maxIndex);
+                File directory = new File(dirPath);
+                if (!directory.exists()) {
+                    directory.mkdir();
+                }
+                List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(2, 18, 2,feature_cardinalities.get(minIndex), feature_cardinalities.get(maxIndex));
+                Path modelDirFeatureCard = Paths.get(dirPath);
+                modelGenerator.safeFeatureModelsToFiles(featureCardinalityModels, modelDirFeatureCard);
+            }
+        }
+
+
+
+
+
+
+
+/*
+        for(int i=1;i<=9;i++){
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/sum" + "_" + i;
+            File directory = new File(dirPath);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            List<FeatureModel> sumModels = modelGenerator.generateSumModels(20, 100, 10, 1, 100, i/10.0);
+            Path modelDirSum = Paths.get(dirPath);
+            modelGenerator.safeFeatureModelsToFiles(sumModels, modelDirSum);
+        }
+
+
+ */
+
+
+
+
+/*
+
+        for(int i=1;i<=9;i++) {
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/product" + "_" + i;
+            File directory = new File(dirPath);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+            List<FeatureModel> productModels = modelGenerator.generateProductModels(2, 18, 2, 1, 10, i/10.0);
+            Path modelDirProduct = Paths.get(dirPath);
+            modelGenerator.safeFeatureModelsToFiles(productModels, modelDirProduct);
+        }
+
+
+
+ */
+
+
+
 
 
         /*
@@ -60,11 +117,22 @@ public class ModelGenerator {
 
          */
 
+/*
+        for(int i=1;i<=9;i++) {
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/div" + "_" + i;
+            File directory = new File(dirPath);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+            List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(4, 20, 2, 1, 10, i/10.0);
+            Path modelDirDiv2 = Paths.get(dirPath);
+            modelGenerator.safeFeatureModelsToFiles(divModels2, modelDirDiv2);
+
+        }
+
+ */
 
 
-        List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(16, 20, 2, 1, 10);
-        Path modelDirDiv2 = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/div2");
-        modelGenerator.safeFeatureModelsToFiles(divModels2, modelDirDiv2);
 
 
 
@@ -77,10 +145,10 @@ public class ModelGenerator {
         //System.out.println(test.toString());
     }
 
-    private List<FeatureModel> generateDivModels2(int minN, int maxN, int stepSize, int aMin, int aMax) {
+    private List<FeatureModel> generateDivModels2(int minN, int maxN, int stepSize, int aMin, int aMax, double complexity) {
         List<FeatureModel> generatedModelList = new LinkedList<>();
         for(int n=minN;n<=maxN;n+=stepSize){
-            generatedModelList.add(generateDivModel2(n,aMin,aMax));
+            generatedModelList.add(generateDivModel2(n,aMin,aMax, complexity));
         }
         return generatedModelList;
     }
@@ -93,42 +161,34 @@ public class ModelGenerator {
         return generatedModelList;
     }
 
-    private List<FeatureModel> generateProductModels(int minN, int maxN, int stepSize, int aMin, int aMax) {
+    private List<FeatureModel> generateProductModels(int minN, int maxN, int stepSize, int aMin, int aMax, double complexity) {
         List<FeatureModel> generatedModelList = new LinkedList<>();
         for(int n=minN;n<=maxN;n+=stepSize){
-            generatedModelList.add(generateProductModel(n,aMin,aMax));
+            generatedModelList.add(generateProductModel(n,aMin,aMax, complexity));
         }
         return generatedModelList;
     }
 
-    private List<FeatureModel> generateSumModels(int minN, int maxN, int stepSize, int aMin, int aMax) {
+    private List<FeatureModel> generateSumModels(int minN, int maxN, int stepSize, int aMin, int aMax, double complexity) {
         List<FeatureModel> generatedModelList = new LinkedList<>();
         for(int n=minN;n<=maxN;n+=stepSize){
-            generatedModelList.add(generateAdditionModel(n,aMin,aMax));
+            generatedModelList.add(generateAdditionModel(n,aMin,aMax, complexity));
         }
         return generatedModelList;
     }
 
-    private List<FeatureModel> generateGroupCardinalityModels(List<Double> cardinalities, int minNumberChildren, int maxNumberChildren, int stepSize) {
+    private List<FeatureModel> generateGroupCardinalityModels(int minNumberChildren, int maxNumberChildren, int stepSize, double minCard, double maxCard) {
         List<FeatureModel> generatedModelList = new LinkedList<>();
         for (int numberChildren = minNumberChildren;numberChildren<=maxNumberChildren;numberChildren+=stepSize){
-            for(int minIndex=0;minIndex<cardinalities.size()-1;minIndex++){
-                for(int maxIndex=minIndex+1;maxIndex<cardinalities.size();maxIndex++){
-                    generatedModelList.add(generateGroupCardinalityModel(numberChildren, minIndex == 0 ? 1 : (int) Math.ceil(numberChildren * cardinalities.get(minIndex)), (int) Math.ceil(numberChildren * cardinalities.get(maxIndex))));
-                }
-            }
+            generatedModelList.add(generateGroupCardinalityModel(numberChildren, minCard == 0.0 ? 1 : (int) Math.ceil(numberChildren * minCard), (int) Math.ceil(numberChildren * maxCard)));
         }
         return generatedModelList;
     }
 
-    private List<FeatureModel> generateFeatureCardinalityModels(List<Double> cardinalities, int minN, int maxN, int stepSize) {
+    private List<FeatureModel> generateFeatureCardinalityModels(int minN, int maxN, int stepSize, double minCard, double maxCard) {
         List<FeatureModel> generatedModelList = new LinkedList<>();
         for (int numberChildren = minN;numberChildren<=maxN;numberChildren+=stepSize){
-            for(int minIndex=0;minIndex<cardinalities.size()-1;minIndex++){
-                for(int maxIndex=minIndex+1;maxIndex<cardinalities.size();maxIndex++){
-                    generatedModelList.add(generateFeatureCardinalityModel(minIndex == 0 ? 1 : (int) Math.ceil(numberChildren * cardinalities.get(minIndex)), (int) Math.ceil(numberChildren * cardinalities.get(maxIndex))));
-                }
-            }
+            generatedModelList.add(generateFeatureCardinalityModel(minCard == 0 ? 1 : (int) Math.ceil(numberChildren * minCard), (int) Math.ceil(numberChildren * maxCard), numberChildren));
         }
         return generatedModelList;
     }
@@ -158,7 +218,7 @@ public class ModelGenerator {
         return featureModel;
     }
 
-    private FeatureModel generateDivModel2(int n, int aMin, int aMax){
+    private FeatureModel generateDivModel2(int n, int aMin, int aMax, double complexity){
         FeatureModel featureModel = new FeatureModel();
         Feature rootFeature = new Feature("root_" + n);
         featureModel.setRootFeature(rootFeature);
@@ -209,17 +269,17 @@ public class ModelGenerator {
         }
 
         final int runs = 10000;
-        var sum = 0L;
+        var a1_results = new LinkedList<Long>();
         for (int i=1;i<=runs;i++){
-            sum += evaluateAtRandom(d1);
+            a1_results.add(evaluateAtRandom(d1, complexity));
         }
-        var average_d1 = sum / runs;
-        sum = 0;
+        var average_d1 = getMedian(a1_results);
+        var a2_results = new LinkedList<Long>();
         for (int i=1;i<=runs;i++){
-            sum += evaluateAtRandom(d2);
+            a2_results.add(evaluateAtRandom(d2, complexity));
         }
-        var average_d2 = sum / runs;
-        Expression d = new NumberExpression(Math.round(((double) average_d1 / (double) average_d2) * 10000.0) / 10000.0);
+        var average_d2 = getMedian(a2_results);
+        Expression d = new NumberExpression(Math.round(((double) average_d1 / (double) average_d2)));
         Constraint constraint = new GreaterEqualsEquationConstraint(
                 new DivExpression(new ParenthesisExpression(d1),new ParenthesisExpression(d2))
                 , d);
@@ -227,17 +287,19 @@ public class ModelGenerator {
         return featureModel;
     }
 
-    private long evaluateAtRandom(Expression expression) {
+    private long evaluateAtRandom(Expression expression, double complexity) {
         if (expression instanceof AddExpression){
-            return evaluateAtRandom(((AddExpression) expression).getLeft()) + evaluateAtRandom(((AddExpression) expression).getRight());
+            return evaluateAtRandom(((AddExpression) expression).getLeft(), complexity) + evaluateAtRandom(((AddExpression) expression).getRight(), complexity);
         }else if(expression instanceof MulExpression){
-            return evaluateAtRandom(((MulExpression) expression).getLeft()) * evaluateAtRandom(((MulExpression) expression).getRight());
+            return evaluateAtRandom(((MulExpression) expression).getLeft(), complexity) * evaluateAtRandom(((MulExpression) expression).getRight(), complexity);
         }else if(expression instanceof ParenthesisExpression){
-            return evaluateAtRandom(((ParenthesisExpression) expression).getContent());
+            return evaluateAtRandom(((ParenthesisExpression) expression).getContent(), complexity);
+        }else if(expression instanceof NumberExpression){
+            return (long) ((NumberExpression) expression).getNumber();
         }else{
             var literalExpression = (LiteralExpression) expression;
             Random rand = new Random();
-            int randomBit = rand.nextInt(2);
+            int randomBit = generateWithProbability(complexity);
             if (randomBit == 0){
                 return 0;
             }else{
@@ -246,6 +308,14 @@ public class ModelGenerator {
                 return (long) attributeValue;
             }
         }
+    }
+
+    public static int generateWithProbability(double probability) {
+        if (probability < 0.0 || probability > 1.0) {
+            throw new IllegalArgumentException("Probability must be between 0 and 1");
+        }
+        Random random = new Random();
+        return random.nextDouble() < probability ? 1 : 0;
     }
 
     private FeatureModel generateDivModel(int n, int aMin, int aMax){
@@ -284,20 +354,20 @@ public class ModelGenerator {
         return featureModel;
     }
 
-    private FeatureModel generateProductModel(int n, int aMin, int aMax){
+    private FeatureModel generateProductModel(int n, int aMin, int aMax, double complexity){
         FeatureModel featureModel = new FeatureModel();
         Feature rootFeature = new Feature("root_" + n);
         featureModel.setRootFeature(rootFeature);
         Group group = new Group(Group.GroupType.OPTIONAL);
         rootFeature.getChildren().add(group);
 
-        double valueProduct = 1;
+        long valueProduct = 1;
         for(int i=1;i<=n;i++){
             Feature feature = new Feature("feature" + i);
             var attributes = feature.getAttributes();
             Random random = new Random();
-            int value = random.nextInt(aMax - aMin + 1) + aMin + 1;
-            valueProduct *= value;
+            int value = random.nextInt(aMax - aMin + 1) + aMin;
+            valueProduct *= (value + 1);
             attributes.put("a", new Attribute<Long>("a", (long)value, feature));
             feature.setParentGroup(group);
             group.getFeatures().add(feature);
@@ -333,14 +403,41 @@ public class ModelGenerator {
         //Random random = new Random();
         //long randomD = ThreadLocalRandom.current().nextLong(0, (long)valueProduct);
         //long randomD = random.nextInt((int)valueProduct + 1);
-        Expression d = new NumberExpression(Math.sqrt(valueProduct));
+        final int runs = 10000;
+        var p_list = new LinkedList<Long>();
+        for (int i=1;i<=runs;i++){
+            var tmp = evaluateAtRandom(product, complexity);
+            p_list.add(tmp);
+        }
+        var average_d1 = getMedian(p_list);
+        Expression d = new LongNumberExpression(average_d1);
         Constraint constraint = new GreaterEqualsEquationConstraint(product, d);
         featureModel.getOwnConstraints().add(constraint);
         return featureModel;
     }
 
+    public static long getMedian(List<Long> values) {
+        if (values == null || values.isEmpty()) {
+            throw new IllegalArgumentException("The list must not be null or empty");
+        }
 
-    private FeatureModel generateAdditionModel(int n, int aMin, int aMax){
+        // Sort the list
+        Collections.sort(values);
+
+        int size = values.size();
+        if (size % 2 == 1) {
+            // Odd size: Return the middle value
+            return values.get(size / 2);
+        } else {
+            // Even size: Return the average of the two middle values
+            long middle1 = values.get(size / 2 - 1);
+            long middle2 = values.get(size / 2);
+            return (middle1 + middle2) / 2; // Use 2.0 to get a double result
+        }
+    }
+
+
+    private FeatureModel generateAdditionModel(int n, int aMin, int aMax, double complexity){
         FeatureModel featureModel = new FeatureModel();
         Feature rootFeature = new Feature("root_" + n);
         featureModel.setRootFeature(rootFeature);
@@ -366,7 +463,7 @@ public class ModelGenerator {
             sum = newAddExpression;
         }
 
-        Expression d = new NumberExpression((double)valueSum / 2);
+        Expression d = new NumberExpression((double)valueSum * complexity);
         Constraint constraint = new GreaterEqualsEquationConstraint(sum, d);
         featureModel.getOwnConstraints().add(constraint);
         return featureModel;
@@ -374,7 +471,7 @@ public class ModelGenerator {
 
     private FeatureModel generateGroupCardinalityModel(int numberFeatures, int minCardinality, int maxCardinality) {
         FeatureModel featureModel = new FeatureModel();
-        Feature rootFeature = new Feature("root_" + numberFeatures + "_" + minCardinality + "_" + maxCardinality);
+        Feature rootFeature = new Feature("root_" + numberFeatures);
         featureModel.setRootFeature(rootFeature);
         Group groupCardinality = new Group(Group.GroupType.GROUP_CARDINALITY);
         groupCardinality.setCardinality(new Cardinality(minCardinality, maxCardinality));
@@ -388,9 +485,9 @@ public class ModelGenerator {
         return featureModel;
     }
 
-    private FeatureModel generateFeatureCardinalityModel(int minCardinality, int maxCardinality) {
+    private FeatureModel generateFeatureCardinalityModel(int minCardinality, int maxCardinality, int numberChildren) {
         FeatureModel featureModel = new FeatureModel();
-        Feature rootFeature = new Feature("root_" + minCardinality + "_" + maxCardinality);
+        Feature rootFeature = new Feature("root_" + numberChildren);
         featureModel.setRootFeature(rootFeature);
         Group group = new Group(Group.GroupType.OPTIONAL);
         rootFeature.getChildren().add(group);

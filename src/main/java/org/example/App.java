@@ -37,6 +37,10 @@ public class App
     public static boolean tseitin = false;
 
     public static void main( String[] args ) throws IOException, ExtensionManager.NoSuchExtensionException {
+        if (args[0].equals("stats")) {
+            printFMStatistics(args[1]);
+            return;
+        }
         final File UVL_FILE = new File(args[0]);
         final File TARGET_FILE = new File(args[1]);
         final Target target = args[2].equals("dimacs") ? Target.DIMACS : Target.OPB;
@@ -54,6 +58,13 @@ public class App
         }
     }
 
+    private static void printFMStatistics(String fmPath) throws IOException {
+        UVLModelFactory uvlModelFactory = new UVLModelFactory();
+        FeatureModel featureModel = loadUVLFeatureModelFromFile(fmPath);
+        FMStatistics fmStatistics = new FMStatistics(featureModel);
+        fmStatistics.printStatistic();
+    }
+
     public static enum Target{
         DIMACS,
         OPB
@@ -62,10 +73,15 @@ public class App
     public static void uvlToOPB(File modelFile, File targetFile) throws IOException {
         UVLModelFactory uvlModelFactory = new UVLModelFactory();
         FeatureModel featureModel = loadUVLFeatureModelFromFile(modelFile.toString());
+
+        Set<LanguageLevel> levels = new HashSet<>();
+        levels.add(LanguageLevel.TYPE_LEVEL);
+        uvlModelFactory.dropLanguageLevel(featureModel, levels);
+
         ConvertFeatureCardinalityForOPB convertFeatureCardinalityForOPB = new ConvertFeatureCardinalityForOPB();
         convertFeatureCardinalityForOPB.convertFeatureModel(featureModel);
 
-        Set<LanguageLevel> levels = new HashSet<>();
+        levels = new HashSet<>();
         levels.add(LanguageLevel.AGGREGATE_FUNCTION);
         levels.add( LanguageLevel.STRING_CONSTRAINTS);
         uvlModelFactory.convertLanguageLevel(featureModel, levels);
