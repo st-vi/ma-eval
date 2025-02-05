@@ -23,14 +23,16 @@ public class ModelGenerator {
         ModelGenerator modelGenerator = new ModelGenerator();
 
 /*
-        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(1000, 10000, 1000);
+        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(10000, 100000, 10000);
         Path modelDirAlternative = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/alternative");
         modelGenerator.safeFeatureModelsToFiles(alternativeModels, modelDirAlternative);
 
 
  */
 
+
 /*
+
         var cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
         for(int minIndex=0;minIndex<cardinalities.size()-1;minIndex++){
             for(int maxIndex=minIndex+1;maxIndex<cardinalities.size();maxIndex++){
@@ -39,7 +41,7 @@ public class ModelGenerator {
                 if (!directory.exists()) {
                     directory.mkdir();
                 }
-                List<FeatureModel> groupCardinalityModels = modelGenerator.generateGroupCardinalityModels(2, 18, 2, cardinalities.get(minIndex), cardinalities.get(maxIndex));
+                List<FeatureModel> groupCardinalityModels = modelGenerator.generateGroupCardinalityModels(200, 5000, 100, cardinalities.get(minIndex), cardinalities.get(maxIndex));
                 Path modelDirGroupCard = Paths.get(dirPath);
                 modelGenerator.safeFeatureModelsToFiles(groupCardinalityModels, modelDirGroupCard);
 
@@ -49,6 +51,8 @@ public class ModelGenerator {
  */
 
 
+
+/*
         var feature_cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
         for(int minIndex=0;minIndex<feature_cardinalities.size()-1;minIndex++) {
             for (int maxIndex = minIndex + 1; maxIndex < feature_cardinalities.size(); maxIndex++) {
@@ -57,11 +61,15 @@ public class ModelGenerator {
                 if (!directory.exists()) {
                     directory.mkdir();
                 }
-                List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(2, 18, 2,feature_cardinalities.get(minIndex), feature_cardinalities.get(maxIndex));
+                List<FeatureModel> featureCardinalityModels = modelGenerator.generateFeatureCardinalityModels(200, 5000, 100,feature_cardinalities.get(minIndex), feature_cardinalities.get(maxIndex));
                 Path modelDirFeatureCard = Paths.get(dirPath);
                 modelGenerator.safeFeatureModelsToFiles(featureCardinalityModels, modelDirFeatureCard);
             }
         }
+
+ */
+
+
 
 
 
@@ -71,39 +79,45 @@ public class ModelGenerator {
 
 /*
         for(int i=1;i<=9;i++){
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/sum" + "_" + i;
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/sum/sum" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
             }
 
-            List<FeatureModel> sumModels = modelGenerator.generateSumModels(20, 100, 10, 1, 100, i/10.0);
+            List<FeatureModel> sumModels = modelGenerator.generateSumModels(2, 100, 1, 1, 100, i/10.0);
             Path modelDirSum = Paths.get(dirPath);
             modelGenerator.safeFeatureModelsToFiles(sumModels, modelDirSum);
         }
 
-
  */
+
+
+
+
+
+
 
 
 
 
 /*
-
         for(int i=1;i<=9;i++) {
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/product" + "_" + i;
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/product/product" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
             }
-            List<FeatureModel> productModels = modelGenerator.generateProductModels(2, 18, 2, 1, 10, i/10.0);
+            List<FeatureModel> productModels = modelGenerator.generateProductModels(2, 18, 1, 1, 10, i/10.0);
             Path modelDirProduct = Paths.get(dirPath);
             modelGenerator.safeFeatureModelsToFiles(productModels, modelDirProduct);
         }
 
 
-
  */
+
+
+
 
 
 
@@ -117,9 +131,9 @@ public class ModelGenerator {
 
          */
 
-/*
+
         for(int i=1;i<=9;i++) {
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/div" + "_" + i;
+            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/div/div" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
@@ -130,7 +144,9 @@ public class ModelGenerator {
 
         }
 
- */
+
+
+
 
 
 
@@ -276,10 +292,13 @@ public class ModelGenerator {
         var average_d1 = getMedian(a1_results);
         var a2_results = new LinkedList<Long>();
         for (int i=1;i<=runs;i++){
-            a2_results.add(evaluateAtRandom(d2, complexity));
+            long tmp_res = (long) evaluateAtRandom(d2, complexity);
+            if (tmp_res != 0){
+                a2_results.add(tmp_res);
+            }
         }
-        var average_d2 = getMedian(a2_results);
-        Expression d = new NumberExpression(Math.round(((double) average_d1 / (double) average_d2)));
+        var average_d2 = !a2_results.isEmpty() ? getMedian(a2_results) : 0.0;
+        Expression d = new NumberExpression(Math.round((((double) average_d1 / (double) average_d2)) * 1000.0) / 1000.0);
         Constraint constraint = new GreaterEqualsEquationConstraint(
                 new DivExpression(new ParenthesisExpression(d1),new ParenthesisExpression(d2))
                 , d);
