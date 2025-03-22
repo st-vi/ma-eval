@@ -22,13 +22,13 @@ public class ModelGenerator {
     public static void main(String[] args) throws IOException {
         ModelGenerator modelGenerator = new ModelGenerator();
 
-/*
-        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(10000, 100000, 10000);
-        Path modelDirAlternative = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/alternative");
+
+        List<FeatureModel> alternativeModels = modelGenerator.generateAlternativeModels(100, 8000, 100);
+        Path modelDirAlternative = Paths.get("./eval/iso_models/alternative");
         modelGenerator.safeFeatureModelsToFiles(alternativeModels, modelDirAlternative);
 
 
- */
+
 
 
 /*
@@ -36,7 +36,7 @@ public class ModelGenerator {
         var cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
         for(int minIndex=0;minIndex<cardinalities.size()-1;minIndex++){
             for(int maxIndex=minIndex+1;maxIndex<cardinalities.size();maxIndex++){
-                String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/groupCard/groupCard" + "_" + cardinalities.get(minIndex) + "_" + cardinalities.get(maxIndex);
+                String dirPath = "./eval/iso_models/groupCard/groupCard" + "_" + cardinalities.get(minIndex) + "_" + cardinalities.get(maxIndex);
                 File directory = new File(dirPath);
                 if (!directory.exists()) {
                     directory.mkdir();
@@ -56,7 +56,7 @@ public class ModelGenerator {
         var feature_cardinalities = List.of(0.0, 0.25, 0.5, 0.75, 1.0);
         for(int minIndex=0;minIndex<feature_cardinalities.size()-1;minIndex++) {
             for (int maxIndex = minIndex + 1; maxIndex < feature_cardinalities.size(); maxIndex++) {
-                String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/featureCard/featureCard" + "_" + feature_cardinalities.get(minIndex) + "_" + feature_cardinalities.get(maxIndex);
+                String dirPath = "./eval/iso_models/featureCard/featureCard" + "_" + feature_cardinalities.get(minIndex) + "_" + feature_cardinalities.get(maxIndex);
                 File directory = new File(dirPath);
                 if (!directory.exists()) {
                     directory.mkdir();
@@ -79,7 +79,7 @@ public class ModelGenerator {
 
 /*
         for(int i=1;i<=9;i++){
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/sum/sum" + "_" + i;
+            String dirPath = "./eval/iso_models/sum/sum" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
@@ -103,7 +103,7 @@ public class ModelGenerator {
 
 /*
         for(int i=1;i<=9;i++) {
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/product/product" + "_" + i;
+            String dirPath = "./eval/iso_models/product/product" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
@@ -126,23 +126,25 @@ public class ModelGenerator {
         /*
 
         List<FeatureModel> divModels = modelGenerator.generateDivModels(15, 30, 5, 0, 100);
-        Path modelDirDiv = Paths.get("/home/stefan/stefan-vill-master/eval/iso_models/div");
+        Path modelDirDiv = Paths.get("./eval/iso_models/div");
         modelGenerator.safeFeatureModelsToFiles(divModels, modelDirDiv);
 
          */
 
 
-        for(int i=1;i<=9;i++) {
-            String dirPath = "/home/stefan/stefan-vill-master/eval/iso_models/div/div" + "_" + i;
+        for(int i=5;i<=5;i++) {
+            String dirPath = "./eval/iso_models/div/div" + "_" + i;
             File directory = new File(dirPath);
             if (!directory.exists()) {
                 directory.mkdir();
             }
-            List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(4, 20, 2, 1, 10, i/10.0);
+            List<FeatureModel> divModels2 = modelGenerator.generateDivModels2(6, 8, 2, 1, 10, i/10.0);
             Path modelDirDiv2 = Paths.get(dirPath);
             modelGenerator.safeFeatureModelsToFiles(divModels2, modelDirDiv2);
 
         }
+
+
 
 
 
